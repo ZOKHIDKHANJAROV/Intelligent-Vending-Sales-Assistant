@@ -1,10 +1,27 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from .api.products import router as products_router
+from .database import Base, SessionLocal, engine
+from .seed import seed_products
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    try:
+        seed_products(db)
+    finally:
+        db.close()
+    yield
+
 app = FastAPI(
     title="VendAI API",
-    version="0.1.0",
+    version="0.2.0",
     description="Backend API for the VendAI vending sales platform.",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -14,6 +31,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(products_router)
 
 @app.get("/health")
 def health() -> dict[str, str]:
