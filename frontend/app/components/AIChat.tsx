@@ -22,6 +22,8 @@ export default function AIChat() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([initial]);
   const [loading, setLoading] = useState(false);
+  const [wizardStep, setWizardStep] = useState<number | null>(null);
+  const [wizard, setWizard] = useState({ purpose: "", location: "", volume: "", water_source: "" });
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -72,7 +74,92 @@ export default function AIChat() {
   function resetChat() {
     setMessages([initial]);
     setMessage("");
+    setWizardStep(null);
+    setWizard({ purpose: "", location: "", volume: "", water_source: "" });
   }
+
+  function startWizard() {
+    setWizardStep(0);
+    setMessages([
+      ...messages,
+      { role: "assistant", content: "Подберём оборудование. Для чего нужен автомат?" },
+    ]);
+  }
+
+  async function wizardSelect(value: string) {
+    const fields = ["purpose", "location", "volume", "water_source"] as const;
+    const labels = [
+      "Для чего нужен автомат?",
+      "Где будет установлен автомат?",
+      "Какой нужен объём?",
+      "Какой источник воды?",
+    ];
+    const nextWizard = { ...wizard, [fields[wizardStep ?? 0]]: value };
+    setWizard(nextWizard);
+
+    const nextStep = (wizardStep ?? 0) + 1;
+    if (nextStep < fields.length) {
+      setWizardStep(nextStep);
+      setMessages((prev) => [...prev, { role: "user", content: value }, { role: "assistant", content: labels[nextStep] }]);
+      return;
+    }
+
+    setWizardStep(null);
+    setLoading(true);
+    setMessages((prev) => [...prev, { role: "user", content: value }, { role: "assistant", content: "Подбираю оборудование..." }]);
+
+    try {
+      const response = await fetch(`${API_URL}/api/v1/recommendations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nextWizard),
+      });
+      if (!response.ok) throw new Error("Recommendation failed");
+      const data = await response.json();
+      const p = data.product;
+      const price = p.price == null ? "По запросу" : `${p.price} ${p.currency}`;
+      const specs = Object.entries(p.specifications || {}).slice(0, 4).map(([k, v]) => `${k}: ${v}`).join("\n");
+      setMessages((prev) => [
+        ...prev.slice(0, -1),
+        {
+          role: "assistant",
+          content: `Рекомендую рассмотреть ${p.name} (${p.model}).\n\n${data.explanation}\n\n${specs}\nЦена: ${price}\nНаличие: ${p.availability}`,
+        },
+      ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev.slice(0, -1),
+        { role: "assistant", content: "Не удалось выполнить подбор. Оставьте заявку менеджеру." },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const wizardOptions = [
+    [
+      ["Для продажи воды", "Продажа воды"],
+      ["Для бизнеса/объекта", "Бизнес или объект"],
+      ["Пока не знаю", "Пока не знаю"],
+    ],
+    [
+      ["Магазин", "Магазин"],
+      ["Жилой комплекс", "Жилой комплекс"],
+      ["Производство", "Производство"],
+      ["Другое", "Другое"],
+    ],
+    [
+      ["До 500 л/сутки", "До 500 л/сутки"],
+      ["500–1000 л/сутки", "500–1000 л/сутки"],
+      ["Более 1000 л/сутки", "Более 1000 л/сутки"],
+      ["Не знаю", "Не знаю"],
+    ],
+    [
+      ["Водопровод", "Водопровод"],
+      ["Скважина", "Скважина"],
+      ["Не знаю", "Не знаю"],
+    ],
+  ];
 
   return (
     <>
@@ -98,7 +185,20 @@ export default function AIChat() {
             {messages.length === 1 && !loading && (
               <div className="ai-quick-actions">
                 {quickActions.map(([label, prompt]) => (
-                  <button key={label} type="button" onClick={() => submitText(prompt)}>{label}</button>
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => label === "Подобрать аппарат" ? startWizard() : submitText(prompt)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+            {wizardStep !== null && !loading && (
+              <div className="ai-quick-actions">
+                {wizardOptions[wizardStep].map(([value, label]) => (
+                  <button key={value} type="button" onClick={() => wizardSelect(value)}>{label}</button>
                 ))}
               </div>
             )}
