@@ -7,8 +7,15 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 const initial: Message = {
   role: "assistant",
-  content: "Здравствуйте. Я AI-консультант VendAI. Помогу подобрать вендинговый аппарат и расскажу о характеристиках. Что вас интересует?",
+  content: "Здравствуйте. Я AI-консультант VendAI. Помогу подобрать аппарат, расскажу о характеристиках и помогу оставить заявку.",
 };
+
+const quickActions = [
+  ["Подобрать аппарат", "Хочу подобрать аппарат для бизнеса."],
+  ["Характеристики XL-01", "Расскажите характеристики XL-01."],
+  ["Сколько стоит?", "Сколько стоит аппарат?"],
+  ["Как выбрать?", "Какой аппарат мне выбрать?"],
+];
 
 export default function AIChat() {
   const [open, setOpen] = useState(false);
@@ -21,12 +28,11 @@ export default function AIChat() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  async function submit(event: FormEvent) {
-    event.preventDefault();
-    const text = message.trim();
-    if (!text || loading) return;
+  async function submitText(text: string) {
+    const clean = text.trim();
+    if (!clean || loading) return;
 
-    const next = [...messages, { role: "user" as const, content: text }];
+    const next = [...messages, { role: "user" as const, content: clean }];
     setMessages(next);
     setMessage("");
     setLoading(true);
@@ -36,7 +42,7 @@ export default function AIChat() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: text,
+          message: clean,
           history: messages.slice(-8),
         }),
       });
@@ -58,6 +64,16 @@ export default function AIChat() {
     }
   }
 
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    await submitText(message);
+  }
+
+  function resetChat() {
+    setMessages([initial]);
+    setMessage("");
+  }
+
   return (
     <>
       {open && (
@@ -67,7 +83,10 @@ export default function AIChat() {
               <strong>AI-консультант</strong>
               <small>VendAI · онлайн</small>
             </div>
-            <button type="button" onClick={() => setOpen(false)} aria-label="Закрыть">×</button>
+            <div className="ai-chat-header-actions">
+              <button type="button" onClick={resetChat} aria-label="Начать заново">↻</button>
+              <button type="button" onClick={() => setOpen(false)} aria-label="Закрыть">×</button>
+            </div>
           </div>
 
           <div className="ai-chat-messages">
@@ -76,7 +95,14 @@ export default function AIChat() {
                 {item.content}
               </div>
             ))}
-            {loading && <div className="ai-message ai-assistant">Печатает...</div>}
+            {messages.length === 1 && !loading && (
+              <div className="ai-quick-actions">
+                {quickActions.map(([label, prompt]) => (
+                  <button key={label} type="button" onClick={() => submitText(prompt)}>{label}</button>
+                ))}
+              </div>
+            )}
+            {loading && <div className="ai-message ai-assistant">Подбираю ответ...</div>}
             <div ref={bottomRef} />
           </div>
 
