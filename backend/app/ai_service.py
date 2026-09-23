@@ -7,7 +7,7 @@ from .models import Product
 from .qdrant_service import search_documents
 
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434").rstrip("/")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:8b")
 
 SYSTEM_PROMPT = """Ты — AI-консультант отдела продаж VendAI.
 Твоя задача — понять потребность клиента, подобрать подходящее оборудование и довести диалог до заявки менеджеру.
