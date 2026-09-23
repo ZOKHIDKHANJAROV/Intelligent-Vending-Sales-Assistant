@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field
 
+
 class ProductBase(BaseModel):
     slug: str = Field(min_length=1, max_length=120)
     name: str = Field(min_length=1, max_length=200)
@@ -15,8 +16,10 @@ class ProductBase(BaseModel):
     advantages: list[str] = Field(default_factory=list)
     is_active: bool = True
 
+
 class ProductCreate(ProductBase):
     pass
+
 
 class ProductUpdate(BaseModel):
     slug: str | None = Field(default=None, min_length=1, max_length=120)
@@ -33,9 +36,11 @@ class ProductUpdate(BaseModel):
     advantages: list[str] | None = None
     is_active: bool | None = None
 
+
 class ProductOut(ProductBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
+
 
 class ProductList(BaseModel):
     items: list[ProductOut]
@@ -49,6 +54,7 @@ class LeadCreate(BaseModel):
     product_slug: str | None = Field(default=None, max_length=120)
     source: str = Field(default="website", max_length=50)
 
+
 class LeadOut(LeadCreate):
     model_config = ConfigDict(from_attributes=True)
     id: int
@@ -59,9 +65,12 @@ class ChatMessage(BaseModel):
     role: str
     content: str
 
+
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=4000)
     history: list[ChatMessage] = Field(default_factory=list)
+    sales_context: dict[str, str] = Field(default_factory=dict)
+
 
 class ChatResponse(BaseModel):
     answer: str
@@ -69,13 +78,12 @@ class ChatResponse(BaseModel):
     error: str | None = None
 
 
-from pydantic import BaseModel, Field
-
 class RecommendationRequest(BaseModel):
     purpose: str = Field(min_length=1, max_length=120)
     location: str = Field(min_length=1, max_length=120)
     volume: str = Field(min_length=1, max_length=120)
     water_source: str = Field(min_length=1, max_length=120)
+
 
 class RecommendationOut(BaseModel):
     product: dict
