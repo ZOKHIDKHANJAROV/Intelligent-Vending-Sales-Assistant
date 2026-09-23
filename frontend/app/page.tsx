@@ -1,11 +1,4 @@
-const product = {
-  name: "XL-01",
-  title: "Вендинговый аппарат по продаже воды",
-  capacity: "250 л/ч",
-  power: "1,87 кВт",
-  voltage: "220 В / 50 Гц",
-  temperature: "4°C–40°C",
-};
+import Catalog from "./catalog/Catalog";
 
 export default function HomePage() {
   return (
@@ -40,7 +33,7 @@ export default function HomePage() {
               <a className="button button-secondary" href="#contacts">Получить расчёт</a>
             </div>
             <div className="hero-stats">
-              <div><strong>250 л/ч</strong><span>производительность</span></div>
+              <div><strong>250 л/ч</strong><span>производительность XL-01</span></div>
               <div><strong>9 этапов</strong><span>очистки воды</span></div>
               <div><strong>12 мес.</strong><span>гарантия</span></div>
             </div>
@@ -55,11 +48,7 @@ export default function HomePage() {
               </div>
               <div className="machine-body">
                 <div className="screen">WATER<br /><small>VENDING</small></div>
-                <div className="machine-panel">
-                  <span />
-                  <span />
-                  <span />
-                </div>
+                <div className="machine-panel"><span /><span /><span /></div>
                 <div className="dispense">ВЫДАЧА<br />ВОДЫ</div>
               </div>
               <div className="machine-base" />
@@ -74,36 +63,11 @@ export default function HomePage() {
           <div className="section-heading">
             <div>
               <span className="eyebrow">КАТАЛОГ</span>
-              <h2>Популярная модель</h2>
+              <h2>Вендинговые аппараты</h2>
             </div>
-            <a className="text-link" href="#contacts">Запросить цену →</a>
+            <a className="text-link" href="/catalog">Открыть полный каталог →</a>
           </div>
-
-          <article className="product-card">
-            <div className="product-image">
-              <div className="mini-machine">
-                <div className="mini-screen">WATER</div>
-                <div className="mini-panel"><i /><i /><i /></div>
-              </div>
-              <span className="product-tag">В наличии</span>
-            </div>
-            <div className="product-info">
-              <span className="product-category">ВЕНДИНГОВЫЕ АППАРАТЫ / ВОДА</span>
-              <h3>{product.title}</h3>
-              <p className="model">Модель: <strong>{product.name}</strong></p>
-              <p className="description">
-                Компьютеризированный автомат с 9-ступенчатой очисткой и
-                минерализацией воды. Подходит для сетевой и скважинной воды.
-              </p>
-              <div className="spec-grid">
-                <div><span>Производительность</span><strong>{product.capacity}</strong></div>
-                <div><span>Мощность</span><strong>{product.power}</strong></div>
-                <div><span>Питание</span><strong>{product.voltage}</strong></div>
-                <div><span>Температура</span><strong>{product.temperature}</strong></div>
-              </div>
-              <a className="button button-primary" href="#contacts">Получить коммерческое предложение</a>
-            </div>
-          </article>
+          <Catalog />
         </div>
       </section>
 
