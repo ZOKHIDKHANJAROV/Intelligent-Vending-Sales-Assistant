@@ -40,3 +40,16 @@ class ProductOut(ProductBase):
 class ProductList(BaseModel):
     items: list[ProductOut]
     total: int
+
+
+class LeadCreate(BaseModel):
+    name: str = Field(min_length=2, max_length=120)
+    phone: str = Field(min_length=5, max_length=50)
+    message: str = Field(default="", max_length=2000)
+    product_slug: str | None = Field(default=None, max_length=120)
+    source: str = Field(default="website", max_length=50)
+
+class LeadOut(LeadCreate):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    status: str
