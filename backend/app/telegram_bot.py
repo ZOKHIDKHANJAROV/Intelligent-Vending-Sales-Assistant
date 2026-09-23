@@ -210,7 +210,20 @@ async def create_lead(message: Message, text: str):
     name = parts[0]
     phone = parts[1]
     question = parts[2] if len(parts) == 3 else "Заявка из Telegram"
-    product_slug = wizard_sessions.get(user_id, {}).get("product_slug")
+    session = wizard_sessions.get(user_id, {})
+    product_slug = session.get("product_slug")
+    collected = [
+        f"{label}: {session[key]}"
+        for key, label in (
+            ("purpose", "Назначение"),
+            ("location", "Место"),
+            ("volume", "Объём"),
+            ("water_source", "Источник воды"),
+        )
+        if session.get(key)
+    ]
+    if collected:
+        question = question + "\\n\\nПараметры подбора: " + "; ".join(collected)
 
     try:
         response = await http.post(
@@ -347,6 +360,7 @@ async def chat(message: Message):
             json={
                 "message": text,
                 "history": history,
+                "sales_context": {k: v for k, v in wizard_sessions.get(user_id, {}).items() if k in {"purpose", "location", "volume", "water_source"}},
             },
         )
         response.raise_for_status()
