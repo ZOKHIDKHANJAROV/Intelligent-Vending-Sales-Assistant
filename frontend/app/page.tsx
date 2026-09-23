@@ -1,4 +1,5 @@
 import Catalog from "./catalog/Catalog";
+import LeadForm from "./components/LeadForm";
 
 export default function HomePage() {
   return (
@@ -113,12 +114,7 @@ export default function HomePage() {
             <h2>Расскажите, какой бизнес вы планируете запустить</h2>
             <p>Подберём оборудование и подготовим коммерческое предложение.</p>
           </div>
-          <form className="lead-form">
-            <input placeholder="Ваше имя" />
-            <input placeholder="Телефон" />
-            <textarea placeholder="Что вас интересует?" rows={4} />
-            <button className="button button-primary" type="button">Отправить заявку</button>
-          </form>
+          <LeadForm />
         </div>
       </section>
 
