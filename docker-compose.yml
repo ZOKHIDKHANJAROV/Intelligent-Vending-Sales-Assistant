@@ -22,6 +22,19 @@ services:
       - redis
       - ollama
 
+  telegram-bot:
+    build:
+      context: ./backend
+    command: python -m app.telegram_bot
+    env_file:
+      - .env
+    environment:
+      BACKEND_URL: http://backend:8000
+    depends_on:
+      - backend
+      - ollama
+    restart: unless-stopped
+
   postgres:
     image: postgres:16-alpine
     environment:
