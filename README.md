@@ -65,3 +65,34 @@ Protected requests require:
 Website -> FastAPI -> PostgreSQL / Qdrant / Redis / Ollama
 
 The AI assistant will use RAG for company documents and structured product data from PostgreSQL.
+
+## AI Assistant
+
+The website includes an AI sales consultant backed by Ollama.
+
+Chat endpoint:
+
+- `POST /api/v1/chat`
+
+Request:
+
+```json
+{
+  "message": "Какая производительность у XL-01?",
+  "history": []
+}
+```
+
+The assistant receives active products directly from PostgreSQL and is instructed not to invent prices, availability, specifications, delivery terms, or warranty conditions.
+
+### Start Ollama
+
+After starting Docker Compose, pull the configured model inside the Ollama container:
+
+```bash
+docker compose exec ollama ollama pull llama3.2:3b
+```
+
+Then open the website and use the AI button in the lower-right corner.
+
+For a stronger local model, change `OLLAMA_MODEL` in `.env` and pull that model into the Ollama container.
