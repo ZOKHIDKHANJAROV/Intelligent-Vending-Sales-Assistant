@@ -373,3 +373,19 @@ footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--muted)
   .admin-form-card { padding: 20px; }
   .admin-section-title { align-items: flex-start; flex-direction: column; }
 }
+
+.form-success { color: var(--accent); font-size: 13px; margin: 3px 0 0; }
+.form-error { color: #ff7d7d; font-size: 13px; margin: 3px 0 0; }
+.lead-form button:disabled { opacity: .55; cursor: wait; }
+.lead-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 25px;
+  padding: 22px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
+}
+.lead-row-top { display: flex; align-items: center; gap: 12px; }
+.lead-row p { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
+.lead-phone { display: inline-block; color: var(--accent); margin-top: 8px; font-size: 14px; }
+.lead-status { padding: 5px 9px; border-radius: 999px; font-size: 10px; }
+.lead-new { color: #ffd27a; background: rgba(255,210,122,.1); }
+.lead-contacted { color: var(--accent-2); background: rgba(88,166,255,.1); }
+.lead-closed { color: var(--muted); background: rgba(255,255,255,.06); }
+@media (max-width: 700px) { .lead-row { align-items: flex-start; flex-direction: column; } }
