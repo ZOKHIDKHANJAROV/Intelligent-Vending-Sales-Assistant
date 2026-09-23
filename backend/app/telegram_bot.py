@@ -113,6 +113,10 @@ async def chat(message: Message):
     text = message.text.strip()
 
     if user_id in lead_sessions:
+        if text == "Отмена":
+            lead_sessions.discard(user_id)
+            await message.answer("Заявка отменена.", reply_markup=main_keyboard())
+            return
         await create_lead(message, text)
         return
 
@@ -131,11 +135,6 @@ async def chat(message: Message):
         histories[user_id].clear()
         await message.answer(welcome(), reply_markup=main_keyboard())
         return
-    elif text == "Отмена":
-        lead_sessions.discard(user_id)
-        await message.answer("Заявка отменена.", reply_markup=main_keyboard())
-        return
-
     history = histories[user_id][-8:]
 
     try:
