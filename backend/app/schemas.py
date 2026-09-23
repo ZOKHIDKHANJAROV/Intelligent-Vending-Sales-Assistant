@@ -53,3 +53,17 @@ class LeadOut(LeadCreate):
     model_config = ConfigDict(from_attributes=True)
     id: int
     status: str
+
+
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+class ChatRequest(BaseModel):
+    message: str = Field(min_length=1, max_length=4000)
+    history: list[ChatMessage] = Field(default_factory=list)
+
+class ChatResponse(BaseModel):
+    answer: str
+    model: str
+    error: str | None = None
