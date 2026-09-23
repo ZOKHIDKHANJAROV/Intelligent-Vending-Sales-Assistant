@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from .api.admin_products import router as admin_products_router
 from .api.products import router as products_router
 from .database import Base, SessionLocal, engine
 from .seed import seed_products
@@ -19,7 +20,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="VendAI API",
-    version="0.2.0",
+    version="0.3.0",
     description="Backend API for the VendAI vending sales platform.",
     lifespan=lifespan,
 )
@@ -33,6 +34,7 @@ app.add_middleware(
 )
 
 app.include_router(products_router)
+app.include_router(admin_products_router)
 
 @app.get("/health")
 def health() -> dict[str, str]:
