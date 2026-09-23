@@ -25,8 +25,8 @@ wizard_sessions: dict[int, dict[str, str]] = {}
 def main_keyboard() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Подобрать аппарат"), KeyboardButton(text="Оборудование")],
-            [KeyboardButton(text="Характеристики"), KeyboardButton(text="Цена")],
+            [KeyboardButton(text="Характеристики моделей"), KeyboardButton(text="Характеристики XL-01")],
+            [KeyboardButton(text="Подобрать аппарат"), KeyboardButton(text="Цена")],
             [KeyboardButton(text="Связаться с менеджером"), KeyboardButton(text="Начать заново")],
         ],
         resize_keyboard=True,
@@ -54,8 +54,8 @@ def options_keyboard(options: list[str]) -> ReplyKeyboardMarkup:
 def welcome() -> str:
     return (
         "Здравствуйте. Я AI-консультант VendAI.\n\n"
-        "Помогу подобрать вендинговый аппарат, рассказать о характеристиках "
-        "и принять заявку менеджеру.\n\n"
+        "Сначала могу проконсультировать по моделям и их характеристикам. "
+        "Затем помогу подобрать аппарат под вашу задачу и оформить заявку менеджеру.\n\n"
         "Выберите действие ниже или просто напишите вопрос."
     )
 
@@ -337,9 +337,9 @@ async def chat(message: Message):
                 await begin_lead(message, session.get("product_slug"))
                 return
 
-    if text == "Оборудование":
-        text = "Какие аппараты доступны?"
-    elif text == "Характеристики":
+    if text == "Характеристики моделей":
+        text = "Какие модели доступны и какие у них характеристики?"
+    elif text == "Характеристики XL-01":
         text = "Расскажите характеристики XL-01."
     elif text == "Цена":
         text = "Сколько стоит аппарат?"
