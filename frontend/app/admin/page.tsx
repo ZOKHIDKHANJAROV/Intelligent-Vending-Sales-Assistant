@@ -143,6 +143,7 @@ export default function AdminPage() {
         <div className="admin-header">
           <div><span className="eyebrow">VENDAI ADMIN</span><h1>Каталог товаров</h1></div>
           <div className="admin-header-actions">
+            <a className="button button-secondary" href="/admin/leads">Заявки</a>
             <a className="button button-secondary" href="/catalog">Открыть сайт</a>
             <button className="button button-secondary" onClick={logout} type="button">Выйти</button>
           </div>
