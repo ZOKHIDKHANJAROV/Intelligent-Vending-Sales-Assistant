@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 type Message = { role: "user" | "assistant"; content: string };
+type LeadFormState = { name: string; phone: string; message: string };
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 const initial: Message = {
@@ -24,6 +25,9 @@ export default function AIChat() {
   const [loading, setLoading] = useState(false);
   const [wizardStep, setWizardStep] = useState<number | null>(null);
   const [wizard, setWizard] = useState({ purpose: "", location: "", volume: "", water_source: "" });
+  const [leadOpen, setLeadOpen] = useState(false);
+  const [lead, setLead] = useState<LeadFormState>({ name: "", phone: "", message: "" });
+  const [leadState, setLeadState] = useState<"idle" | "sending" | "success" | "error">("idle");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -69,6 +73,23 @@ export default function AIChat() {
   async function submit(event: FormEvent) {
     event.preventDefault();
     await submitText(message);
+  }
+
+  async function submitLead(event: FormEvent) {
+    event.preventDefault();
+    setLeadState("sending");
+    try {
+      const response = await fetch(API_URL + "/api/v1/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...lead, source: "website" }),
+      });
+      if (!response.ok) throw new Error("Lead request failed");
+      setLeadState("success");
+      setMessages((prev) => [...prev, { role: "assistant", content: "Заявка отправлена. Менеджер свяжется с вами по указанному номеру." }]);
+    } catch {
+      setLeadState("error");
+    }
   }
 
   function resetChat() {
@@ -218,9 +239,23 @@ export default function AIChat() {
             </button>
           </form>
 
-          <a className="ai-chat-lead" href="/#contacts" onClick={() => setOpen(false)}>
-            Нужна цена или коммерческое предложение? Оставить заявку →
-          </a>
+          {!leadOpen ? (
+            <button type="button" className="ai-chat-lead ai-chat-lead-button" onClick={() => setLeadOpen(true)}>
+              Получить предложение менеджера →
+            </button>
+          ) : (
+            <form className="ai-lead-form" onSubmit={submitLead}>
+              <strong>Получить предложение</strong>
+              <input required placeholder="Ваше имя" value={lead.name} onChange={(e) => setLead({ ...lead, name: e.target.value })} />
+              <input required type="tel" placeholder="Телефон" value={lead.phone} onChange={(e) => setLead({ ...lead, phone: e.target.value })} />
+              <textarea placeholder="Что вас интересует?" rows={2} value={lead.message} onChange={(e) => setLead({ ...lead, message: e.target.value })} />
+              <button className="button button-primary" type="submit" disabled={leadState === "sending"}>
+                {leadState === "sending" ? "Отправка..." : "Отправить заявку"}
+              </button>
+              {leadState === "success" && <small className="form-success">Заявка отправлена.</small>}
+              {leadState === "error" && <small className="form-error">Не удалось отправить заявку.</small>}
+            </form>
+          )}
         </section>
       )}
 
