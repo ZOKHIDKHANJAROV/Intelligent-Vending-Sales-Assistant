@@ -7,11 +7,13 @@ from ..schemas import ChatRequest, ChatResponse
 
 router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
 
+
 @router.post("", response_model=ChatResponse)
 async def chat(payload: ChatRequest, db: Session = Depends(get_db)):
     result = await generate_answer(
         db=db,
         message=payload.message,
         history=[item.model_dump() for item in payload.history],
+        sales_context=payload.sales_context,
     )
     return ChatResponse(**result)
