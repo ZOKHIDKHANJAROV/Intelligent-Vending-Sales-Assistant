@@ -25,6 +25,7 @@ export default function AIChat() {
   const [loading, setLoading] = useState(false);
   const [wizardStep, setWizardStep] = useState<number | null>(null);
   const [wizard, setWizard] = useState({ purpose: "", location: "", volume: "", water_source: "" });
+  const [salesContext, setSalesContext] = useState<Record<string, string>>({});
   const [leadOpen, setLeadOpen] = useState(false);
   const [leadProductSlug, setLeadProductSlug] = useState<string | undefined>(undefined);
   const [lead, setLead] = useState<LeadFormState>({ name: "", phone: "", message: "" });
@@ -51,6 +52,7 @@ export default function AIChat() {
         body: JSON.stringify({
           message: clean,
           history: messages.slice(-8),
+          sales_context: salesContext,
         }),
       });
 
@@ -98,6 +100,7 @@ export default function AIChat() {
     setMessage("");
     setWizardStep(null);
     setWizard({ purpose: "", location: "", volume: "", water_source: "" });
+    setSalesContext({});
     setLeadOpen(false);
     setLeadProductSlug(undefined);
     setLeadState("idle");
@@ -122,6 +125,7 @@ export default function AIChat() {
     ];
     const nextWizard = { ...wizard, [fields[wizardStep ?? 0]]: value };
     setWizard(nextWizard);
+    setSalesContext(nextWizard);
 
     const nextStep = (wizardStep ?? 0) + 1;
     if (nextStep < fields.length) {
