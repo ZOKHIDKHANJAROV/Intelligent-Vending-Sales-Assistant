@@ -26,6 +26,7 @@ export default function AIChat() {
   const [wizardStep, setWizardStep] = useState<number | null>(null);
   const [wizard, setWizard] = useState({ purpose: "", location: "", volume: "", water_source: "" });
   const [leadOpen, setLeadOpen] = useState(false);
+  const [leadProductSlug, setLeadProductSlug] = useState<string | undefined>(undefined);
   const [lead, setLead] = useState<LeadFormState>({ name: "", phone: "", message: "" });
   const [leadState, setLeadState] = useState<"idle" | "sending" | "success" | "error">("idle");
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -82,7 +83,7 @@ export default function AIChat() {
       const response = await fetch(API_URL + "/api/v1/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...lead, source: "website" }),
+        body: JSON.stringify({ ...lead, product_slug: leadProductSlug, source: "website" }),
       });
       if (!response.ok) throw new Error("Lead request failed");
       setLeadState("success");
@@ -97,6 +98,10 @@ export default function AIChat() {
     setMessage("");
     setWizardStep(null);
     setWizard({ purpose: "", location: "", volume: "", water_source: "" });
+    setLeadOpen(false);
+    setLeadProductSlug(undefined);
+    setLeadState("idle");
+    setLead({ name: "", phone: "", message: "" });
   }
 
   function startWizard() {
@@ -138,6 +143,8 @@ export default function AIChat() {
       if (!response.ok) throw new Error("Recommendation failed");
       const data = await response.json();
       const p = data.product;
+      if (!p || !p.model) throw new Error("No product");
+      setLeadProductSlug(p.slug);
       const price = p.price == null ? "По запросу" : `${p.price} ${p.currency}`;
       const specs = Object.entries(p.specifications || {}).slice(0, 4).map(([k, v]) => `${k}: ${v}`).join("\n");
       setMessages((prev) => [
@@ -223,6 +230,11 @@ export default function AIChat() {
                 ))}
               </div>
             )}
+            {wizardStep === null && leadProductSlug && !loading && !leadOpen && (
+              <div className="ai-quick-actions">
+                <button type="button" onClick={() => setLeadOpen(true)}>Получить предложение по этой модели</button>
+              </div>
+            )}
             {loading && <div className="ai-message ai-assistant">Подбираю ответ...</div>}
             <div ref={bottomRef} />
           </div>
@@ -245,7 +257,7 @@ export default function AIChat() {
             </button>
           ) : (
             <form className="ai-lead-form" onSubmit={submitLead}>
-              <strong>Получить предложение</strong>
+              <strong>Получить предложение{leadProductSlug ? " по выбранной модели" : ""}</strong>
               <input required placeholder="Ваше имя" value={lead.name} onChange={(e) => setLead({ ...lead, name: e.target.value })} />
               <input required type="tel" placeholder="Телефон" value={lead.phone} onChange={(e) => setLead({ ...lead, phone: e.target.value })} />
               <textarea placeholder="Что вас интересует?" rows={2} value={lead.message} onChange={(e) => setLead({ ...lead, message: e.target.value })} />
