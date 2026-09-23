@@ -21,3 +21,15 @@ class Product(Base):
     specifications: Mapped[dict] = mapped_column(JSONB, default=dict)
     advantages: Mapped[list] = mapped_column(JSONB, default=list)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+
+class Lead(Base):
+    __tablename__ = "leads"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(120))
+    phone: Mapped[str] = mapped_column(String(50), index=True)
+    message: Mapped[str] = mapped_column(Text, default="")
+    product_slug: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    source: Mapped[str] = mapped_column(String(50), default="website")
+    status: Mapped[str] = mapped_column(String(30), default="new", index=True)
