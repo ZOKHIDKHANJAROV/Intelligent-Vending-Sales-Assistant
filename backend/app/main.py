@@ -1,19 +1,20 @@
 from contextlib import asynccontextmanager
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from .api.admin_products import router as admin_products_router
 from .api.chat import router as chat_router
 from .api.leads import router as leads_router
 from .api.products import router as products_router
 from .api.recommendations import router as recommendations_router
+from .api.knowledge import router as knowledge_router
 from .database import Base, SessionLocal, engine
+from .qdrant_service import ensure_collection
 from .seed import seed_products
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    await ensure_collection()
     db = SessionLocal()
     try:
         seed_products(db)
@@ -21,26 +22,14 @@ async def lifespan(app: FastAPI):
         db.close()
     yield
 
-app = FastAPI(
-    title="VendAI API",
-    version="0.4.0",
-    description="Backend API for the VendAI vending sales platform.",
-    lifespan=lifespan,
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
+app = FastAPI(title="VendAI API", version="0.5.0", description="Backend API for the VendAI vending sales platform.", lifespan=lifespan)
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 app.include_router(products_router)
 app.include_router(admin_products_router)
 app.include_router(chat_router)
 app.include_router(leads_router)
 app.include_router(recommendations_router)
+app.include_router(knowledge_router)
 
 @app.get("/health")
 def health() -> dict[str, str]:
