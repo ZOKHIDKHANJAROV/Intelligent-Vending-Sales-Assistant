@@ -1,5 +1,6 @@
 import Catalog from "./catalog/Catalog";
 import LeadForm from "./components/LeadForm";
+import AIChat from "./components/AIChat";
 
 export default function HomePage() {
   return (
@@ -118,10 +119,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <button className="chat-button" aria-label="Открыть AI-консультанта">
-        <span>AI</span>
-        <div><strong>AI-консультант</strong><small>Поможем выбрать аппарат</small></div>
-      </button>
+      <AIChat />
 
       <footer>
         <div className="container footer-inner">
