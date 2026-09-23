@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api.admin_products import router as admin_products_router
+from .api.chat import router as chat_router
 from .api.leads import router as leads_router
 from .api.products import router as products_router
 from .database import Base, SessionLocal, engine
@@ -36,6 +37,7 @@ app.add_middleware(
 
 app.include_router(products_router)
 app.include_router(admin_products_router)
+app.include_router(chat_router)
 app.include_router(leads_router)
 
 @app.get("/health")
