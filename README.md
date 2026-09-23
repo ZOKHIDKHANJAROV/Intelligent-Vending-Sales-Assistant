@@ -134,3 +134,15 @@ docker compose logs -f telegram-bot
 ```
 
 The bot uses Telegram long polling, so no public webhook URL is required for the MVP.
+
+
+## Basic RAG knowledge base
+
+The MVP uses Qdrant for a small company knowledge base. Put `.txt` knowledge files into `backend/knowledge/`, start Ollama with the embedding model, then ingest them:
+
+```bash
+docker compose exec ollama ollama pull nomic-embed-text
+docker compose exec backend python -c "import asyncio; import httpx; asyncio.run(httpx.post('http://localhost:8000/api/v1/knowledge/ingest'))"
+```
+
+The assistant retrieves relevant knowledge from Qdrant before generating an answer. This is intentionally a small RAG layer for the MVP; the goal is to demonstrate the assistant's ability to answer from company knowledge while acting as a sales assistant.
