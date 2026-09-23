@@ -96,3 +96,41 @@ docker compose exec ollama ollama pull llama3.2:3b
 Then open the website and use the AI button in the lower-right corner.
 
 For a stronger local model, change `OLLAMA_MODEL` in `.env` and pull that model into the Ollama container.
+
+## Telegram AI Assistant
+
+Telegram bot: `@VendAI_uzbot`
+
+The Telegram bot uses the same AI backend as the website:
+
+```text
+Telegram
+   ↓
+aiogram bot
+   ↓
+FastAPI /api/v1/chat
+   ↓
+PostgreSQL products + Ollama
+```
+
+It also supports lead collection with `/contact`. Telegram leads are saved to the same PostgreSQL `leads` table and appear in `/admin/leads`.
+
+### Configure Telegram
+
+Set the token in the local `.env` file:
+
+```env
+TELEGRAM_BOT_TOKEN=your_new_bot_token
+```
+
+Do not commit the real Telegram token to GitHub. If a token has been exposed publicly, revoke it in BotFather and create a new one.
+
+Start:
+
+```bash
+docker compose up -d --build
+docker compose exec ollama ollama pull llama3.2:3b
+docker compose logs -f telegram-bot
+```
+
+The bot uses Telegram long polling, so no public webhook URL is required for the MVP.
