@@ -6,7 +6,7 @@ from collections import defaultdict
 import httpx
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandStart
-from aiogram.types import Message
+from aiogram.types import KeyboardButton, Message, ReplyKeyboardMarkup
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:8000").rstrip("/")
@@ -19,13 +19,24 @@ http = httpx.AsyncClient(timeout=90)
 histories: dict[int, list[dict[str, str]]] = defaultdict(list)
 lead_sessions: set[int] = set()
 
+def main_keyboard() -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="Подобрать аппарат"), KeyboardButton(text="Оборудование")],
+            [KeyboardButton(text="Характеристики"), KeyboardButton(text="Цена")],
+            [KeyboardButton(text="Связаться с менеджером"), KeyboardButton(text="Начать заново")],
+        ],
+        resize_keyboard=True,
+        input_field_placeholder="Выберите действие или напишите вопрос",
+    )
+
 
 def welcome() -> str:
     return (
         "Здравствуйте. Я AI-консультант VendAI.\n\n"
         "Помогу подобрать вендинговый аппарат, рассказать о характеристиках "
         "и принять заявку менеджеру.\n\n"
-        "Просто напишите свой вопрос."
+        "Выберите действие ниже или просто напишите вопрос."
     )
 
 
@@ -33,28 +44,33 @@ def welcome() -> str:
 async def start(message: Message):
     histories[message.from_user.id].clear()
     lead_sessions.discard(message.from_user.id)
-    await message.answer(welcome())
+    await message.answer(welcome(), reply_markup=main_keyboard())
 
 
 @dp.message(Command("help"))
 async def help_command(message: Message):
     await message.answer(
-        "Доступные команды:\n"
-        "/start — начать диалог\n"
-        "/contact — оставить заявку менеджеру\n"
-        "/help — помощь"
+        "Выберите нужное действие на клавиатуре ниже или задайте вопрос обычным сообщением.",
+        reply_markup=main_keyboard(),
     )
 
 
 @dp.message(Command("contact"))
 async def contact_command(message: Message):
+    await begin_lead(message)
+
+
+async def begin_lead(message: Message):
     lead_sessions.add(message.from_user.id)
     await message.answer(
-        "Оставьте данные одним сообщением в формате:\n"
+        "Оставьте заявку в одном сообщении:\n\n"
         "Имя, телефон, ваш вопрос\n\n"
-        "Например: Азиз, +998901234567, интересует XL-01."
+        "Например: Азиз, +998901234567, интересует XL-01.",
+        reply_markup=ReplyKeyboardMarkup(
+            keyboard=[[KeyboardButton(text="Отмена")]],
+            resize_keyboard=True,
+        ),
     )
-
 
 async def create_lead(message: Message, text: str):
     parts = [part.strip() for part in text.split(",", 2)]
@@ -79,13 +95,15 @@ async def create_lead(message: Message, text: str):
         response.raise_for_status()
     except httpx.HTTPError:
         await message.answer(
-            "Не удалось отправить заявку. Попробуйте позже или напишите менеджеру."
+            "Не удалось отправить заявку. Попробуйте позже или напишите менеджеру.",
+            reply_markup=main_keyboard(),
         )
         return
 
     lead_sessions.discard(message.from_user.id)
     await message.answer(
-        "Заявка принята. Менеджер свяжется с вами по указанному номеру."
+        "Заявка принята. Менеджер свяжется с вами по указанному номеру.",
+        reply_markup=main_keyboard(),
     )
 
 
@@ -96,6 +114,26 @@ async def chat(message: Message):
 
     if user_id in lead_sessions:
         await create_lead(message, text)
+        return
+
+    if text == "Подобрать аппарат":
+        text = "Хочу подобрать аппарат для бизнеса."
+    elif text == "Оборудование":
+        text = "Какие аппараты доступны?"
+    elif text == "Характеристики":
+        text = "Расскажите характеристики XL-01."
+    elif text == "Цена":
+        text = "Сколько стоит аппарат?"
+    elif text == "Связаться с менеджером":
+        await begin_lead(message)
+        return
+    elif text == "Начать заново":
+        histories[user_id].clear()
+        await message.answer(welcome(), reply_markup=main_keyboard())
+        return
+    elif text == "Отмена":
+        lead_sessions.discard(user_id)
+        await message.answer("Заявка отменена.", reply_markup=main_keyboard())
         return
 
     history = histories[user_id][-8:]
@@ -124,7 +162,7 @@ async def chat(message: Message):
     history.append({"role": "assistant", "content": answer})
     histories[user_id] = history[-8:]
 
-    await message.answer(answer)
+    await message.answer(answer, reply_markup=main_keyboard())
 
 
 async def main():
