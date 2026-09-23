@@ -1,58 +1,175 @@
+const product = {
+  name: "XL-01",
+  title: "Вендинговый аппарат по продаже воды",
+  capacity: "250 л/ч",
+  power: "1,87 кВт",
+  voltage: "220 В / 50 Гц",
+  temperature: "4°C–40°C",
+};
+
 export default function HomePage() {
   return (
-    <main style={{ maxWidth: 1100, margin: "0 auto", padding: "48px 24px", fontFamily: "Arial, sans-serif" }}>
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 80 }}>
-        <strong style={{ fontSize: 28 }}>VendAI</strong>
-        <nav style={{ display: "flex", gap: 24 }}>
-          <a href="#catalog">Каталог</a>
-          <a href="#about">О компании</a>
-          <a href="#contacts">Контакты</a>
-        </nav>
+    <main>
+      <header className="site-header">
+        <div className="container header-inner">
+          <a className="logo" href="/">
+            <span className="logo-mark">V</span>
+            <span>VendAI</span>
+          </a>
+          <nav>
+            <a href="#catalog">Каталог</a>
+            <a href="#advantages">Преимущества</a>
+            <a href="#about">О компании</a>
+            <a href="#contacts">Контакты</a>
+          </nav>
+          <a className="header-phone" href="#contacts">Получить предложение</a>
+        </div>
       </header>
 
-      <section style={{ marginBottom: 90 }}>
-        <p style={{ marginBottom: 12 }}>Вендинговые аппараты для бизнеса</p>
-        <h1 style={{ fontSize: 56, lineHeight: 1.05, maxWidth: 800, margin: "0 0 24px" }}>
-          Подберите вендинговый аппарат под ваш бизнес
-        </h1>
-        <p style={{ fontSize: 20, maxWidth: 700, lineHeight: 1.5 }}>
-          Каталог оборудования, характеристики, цены и AI-консультант для покупателей.
-        </p>
-        <div style={{ display: "flex", gap: 16, marginTop: 28 }}>
-          <a href="#catalog">Смотреть каталог</a>
-          <a href="#contacts">Получить предложение</a>
+      <section className="hero">
+        <div className="container hero-grid">
+          <div className="hero-copy">
+            <div className="eyebrow">ВЕНДИНГОВОЕ ОБОРУДОВАНИЕ</div>
+            <h1>Автоматы для продажи воды и готовых напитков</h1>
+            <p className="hero-text">
+              Оборудование для бизнеса с автоматизированной продажей,
+              очисткой и выдачей воды. Подберём модель под вашу задачу.
+            </p>
+            <div className="hero-actions">
+              <a className="button button-primary" href="#catalog">Смотреть каталог</a>
+              <a className="button button-secondary" href="#contacts">Получить расчёт</a>
+            </div>
+            <div className="hero-stats">
+              <div><strong>250 л/ч</strong><span>производительность</span></div>
+              <div><strong>9 этапов</strong><span>очистки воды</span></div>
+              <div><strong>12 мес.</strong><span>гарантия</span></div>
+            </div>
+          </div>
+
+          <div className="hero-product">
+            <div className="product-glow" />
+            <div className="machine-card">
+              <div className="machine-top">
+                <span>ATLANT FORTUNA</span>
+                <span>XL-01</span>
+              </div>
+              <div className="machine-body">
+                <div className="screen">WATER<br /><small>VENDING</small></div>
+                <div className="machine-panel">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+                <div className="dispense">ВЫДАЧА<br />ВОДЫ</div>
+              </div>
+              <div className="machine-base" />
+            </div>
+            <div className="product-badge">XL-01<br /><small>ВЕНДИНГ ВОДЫ</small></div>
+          </div>
         </div>
       </section>
 
-      <section id="catalog" style={{ marginBottom: 90 }}>
-        <h2>Каталог</h2>
-        <p>Раздел будет подключен к PostgreSQL с реальными товарами клиента.</p>
+      <section id="catalog" className="section">
+        <div className="container">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">КАТАЛОГ</span>
+              <h2>Популярная модель</h2>
+            </div>
+            <a className="text-link" href="#contacts">Запросить цену →</a>
+          </div>
+
+          <article className="product-card">
+            <div className="product-image">
+              <div className="mini-machine">
+                <div className="mini-screen">WATER</div>
+                <div className="mini-panel"><i /><i /><i /></div>
+              </div>
+              <span className="product-tag">В наличии</span>
+            </div>
+            <div className="product-info">
+              <span className="product-category">ВЕНДИНГОВЫЕ АППАРАТЫ / ВОДА</span>
+              <h3>{product.title}</h3>
+              <p className="model">Модель: <strong>{product.name}</strong></p>
+              <p className="description">
+                Компьютеризированный автомат с 9-ступенчатой очисткой и
+                минерализацией воды. Подходит для сетевой и скважинной воды.
+              </p>
+              <div className="spec-grid">
+                <div><span>Производительность</span><strong>{product.capacity}</strong></div>
+                <div><span>Мощность</span><strong>{product.power}</strong></div>
+                <div><span>Питание</span><strong>{product.voltage}</strong></div>
+                <div><span>Температура</span><strong>{product.temperature}</strong></div>
+              </div>
+              <a className="button button-primary" href="#contacts">Получить коммерческое предложение</a>
+            </div>
+          </article>
+        </div>
       </section>
 
-      <section id="about" style={{ marginBottom: 90 }}>
-        <h2>О компании</h2>
-        <p>Здесь будет информация о компании, доставке, установке и сервисе.</p>
+      <section id="advantages" className="section section-dark">
+        <div className="container">
+          <span className="eyebrow">ПОЧЕМУ ЭТА МОДЕЛЬ</span>
+          <h2>Оборудование для стабильной работы</h2>
+          <div className="advantage-grid">
+            {[
+              ["01", "9-ступенчатая очистка", "Песок, уголь, PP, обратный осмос, УФ, минерализация и озонирование."],
+              ["02", "Работа круглый год", "Защита от замерзания и перегрева, отопительный блок и охлаждение."],
+              ["03", "Автоматическое управление", "Компьютеризированная плата управления вместо полуавтоматической системы."],
+              ["04", "Контроль расхода", "Электросчётчик и водосчётчик для контроля эксплуатации оборудования."],
+            ].map(([number, title, text]) => (
+              <div className="advantage" key={number}>
+                <span>{number}</span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      <section id="contacts">
-        <h2>Контакты</h2>
-        <p>Здесь будет форма заявки и контакты отдела продаж.</p>
+      <section id="about" className="section">
+        <div className="container split">
+          <div>
+            <span className="eyebrow">О КОМПАНИИ</span>
+            <h2>Вендинг как готовая бизнес-инфраструктура</h2>
+          </div>
+          <p>
+            Помогаем подобрать оборудование, рассчитать решение под место
+            установки и организовать поставку. На сайте можно получить
+            характеристики, задать вопрос AI-консультанту и оставить заявку.
+          </p>
+        </div>
       </section>
 
-      <div
-        style={{
-          position: "fixed",
-          right: 24,
-          bottom: 24,
-          border: "1px solid #ddd",
-          borderRadius: 16,
-          padding: "14px 18px",
-          background: "#fff",
-          boxShadow: "0 8px 30px rgba(0,0,0,.08)",
-        }}
-      >
-        AI-консультант
-      </div>
+      <section id="contacts" className="cta-section">
+        <div className="container cta">
+          <div>
+            <span className="eyebrow">ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ</span>
+            <h2>Расскажите, какой бизнес вы планируете запустить</h2>
+            <p>Подберём оборудование и подготовим коммерческое предложение.</p>
+          </div>
+          <form className="lead-form">
+            <input placeholder="Ваше имя" />
+            <input placeholder="Телефон" />
+            <textarea placeholder="Что вас интересует?" rows={4} />
+            <button className="button button-primary" type="button">Отправить заявку</button>
+          </form>
+        </div>
+      </section>
+
+      <button className="chat-button" aria-label="Открыть AI-консультанта">
+        <span>AI</span>
+        <div><strong>AI-консультант</strong><small>Поможем выбрать аппарат</small></div>
+      </button>
+
+      <footer>
+        <div className="container footer-inner">
+          <strong>VendAI</strong>
+          <span>Вендинговое оборудование для бизнеса</span>
+          <span>© 2026</span>
+        </div>
+      </footer>
     </main>
   );
 }
