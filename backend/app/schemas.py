@@ -67,3 +67,16 @@ class ChatResponse(BaseModel):
     answer: str
     model: str
     error: str | None = None
+
+
+from pydantic import BaseModel, Field
+
+class RecommendationRequest(BaseModel):
+    purpose: str = Field(min_length=1, max_length=120)
+    location: str = Field(min_length=1, max_length=120)
+    volume: str = Field(min_length=1, max_length=120)
+    water_source: str = Field(min_length=1, max_length=120)
+
+class RecommendationOut(BaseModel):
+    product: dict
+    explanation: str
