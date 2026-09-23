@@ -22,6 +22,8 @@ Commercial website and AI sales assistant for vending machine customers.
 - Admin CRUD for products
 - Protected admin API with `X-Admin-Key`
 - PostgreSQL seed data for XL-01
+- Customer lead capture and lead management
+- Admin lead statuses: new / contacted / closed
 
 ## Admin
 
@@ -47,6 +49,12 @@ Protected:
 - `POST /api/v1/admin/products`
 - `PUT /api/v1/admin/products/{id}`
 - `DELETE /api/v1/admin/products/{id}`
+
+Leads:
+
+- `POST /api/v1/leads`
+- `GET /api/v1/leads/admin`
+- `PATCH /api/v1/leads/{id}/status?status=new|contacted|closed`
 
 Protected requests require:
 
