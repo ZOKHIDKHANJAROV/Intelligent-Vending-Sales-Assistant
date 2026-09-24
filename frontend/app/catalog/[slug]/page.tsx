@@ -50,6 +50,7 @@ export default function ProductPage() {
           <nav>
             <a href="/">Главная</a>
             <a href="/catalog">Каталог</a>
+            <a href="/vending-3d" style={{ color: "var(--accent)", fontWeight: 700 }}>✨ 3D Вид XL-01</a>
             <a href="/#about">О компании</a>
             <a href="/#contacts">Контакты</a>
           </nav>
@@ -59,7 +60,12 @@ export default function ProductPage() {
 
       <section className="product-page">
         <div className="container">
-          <a className="back-link" href="/catalog">← Вернуться в каталог</a>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+            <a className="back-link" href="/catalog">← Вернуться в каталог</a>
+            <a className="button button-accent-3d" href="/vending-3d" style={{ minHeight: "38px", padding: "0 14px", fontSize: "12px" }}>
+              ✨ Смотреть в 3D (360°)
+            </a>
+          </div>
 
           <div className="product-detail">
             <div className="product-detail-visual">
@@ -88,9 +94,14 @@ export default function ProductPage() {
                 <div><span>Цена</span><strong>{product.price ? `${product.price.toLocaleString("ru-RU")} ${product.currency}` : "По запросу"}</strong></div>
               </div>
 
-              <a className="button button-primary detail-cta" href="/#contacts">
-                Получить коммерческое предложение
-              </a>
+              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginTop: "24px" }}>
+                <a className="button button-accent-3d" href="/vending-3d">
+                  ✨ Открыть в 3D (360° / Рентген / Налив)
+                </a>
+                <a className="button button-primary detail-cta" href="/#contacts" style={{ marginTop: 0 }}>
+                  Получить коммерческое предложение
+                </a>
+              </div>
             </div>
           </div>
 
