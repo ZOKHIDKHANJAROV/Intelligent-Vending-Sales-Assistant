@@ -12,7 +12,8 @@ export default function HomePage() {
             <span>VendAI</span>
           </a>
           <nav>
-            <a href="#catalog">Каталог</a>
+            <a href="/catalog">Каталог</a>
+            <a href="/vending-3d" style={{ color: "var(--accent)", fontWeight: 700 }}>✨ 3D Вид XL-01</a>
             <a href="#advantages">Преимущества</a>
             <a href="#about">О компании</a>
             <a href="#contacts">Контакты</a>
@@ -24,13 +25,14 @@ export default function HomePage() {
       <section className="hero">
         <div className="container hero-grid">
           <div className="hero-copy">
-            <div className="eyebrow">ВЕНДИНГОВОЕ ОБОРУДОВАНИЕ</div>
+            <div className="eyebrow">ВЕНДИНГОВОЕ ОБОРУДОВАНИЕ ATLANT FORTUNA</div>
             <h1>Автоматы для продажи воды и готовых напитков</h1>
             <p className="hero-text">
               Оборудование для бизнеса с автоматизированной продажей,
-              очисткой и выдачей воды. Подберём модель под вашу задачу.
+              9-ступенчатой очисткой и выдачей воды. Исследуйте модель в интерактивном 3D-формате.
             </p>
             <div className="hero-actions">
+              <a className="button button-accent-3d" href="/vending-3d">✨ Интерактивный 3D-вид</a>
               <a className="button button-primary" href="#catalog">Смотреть каталог</a>
               <a className="button button-secondary" href="#contacts">Получить расчёт</a>
             </div>
@@ -41,7 +43,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="hero-product">
+          <a className="hero-product" href="/vending-3d" title="Нажмите, чтобы открыть 3D-модель XL-01">
             <div className="product-glow" />
             <div className="machine-card">
               <div className="machine-top">
@@ -49,14 +51,17 @@ export default function HomePage() {
                 <span>XL-01</span>
               </div>
               <div className="machine-body">
-                <div className="screen">WATER<br /><small>VENDING</small></div>
+                <div className="screen">WATER<br /><small>VENDING 3D</small></div>
                 <div className="machine-panel"><span /><span /><span /></div>
                 <div className="dispense">ВЫДАЧА<br />ВОДЫ</div>
               </div>
               <div className="machine-base" />
             </div>
-            <div className="product-badge">XL-01<br /><small>ВЕНДИНГ ВОДЫ</small></div>
-          </div>
+            <div className="product-badge">
+              XL-01 3D<br />
+              <small style={{ color: "var(--accent)" }}>● НАЖМИТЕ ДЛЯ 3D ОБЗОРА</small>
+            </div>
+          </a>
         </div>
       </section>
 

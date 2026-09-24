@@ -11,9 +11,6 @@ from aiogram.types import KeyboardButton, Message, ReplyKeyboardMarkup
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:8000").rstrip("/")
 
-if not TELEGRAM_BOT_TOKEN:
-    raise RuntimeError("TELEGRAM_BOT_TOKEN is not configured")
-
 dp = Dispatcher()
 http = httpx.AsyncClient(timeout=90)
 
@@ -384,6 +381,10 @@ async def chat(message: Message):
 
 async def main():
     logging.basicConfig(level=logging.INFO)
+    if not TELEGRAM_BOT_TOKEN or TELEGRAM_BOT_TOKEN.startswith("change_this"):
+        logging.warning("TELEGRAM_BOT_TOKEN is not configured. Bot service is standing by...")
+        while True:
+            await asyncio.sleep(3600)
     bot = Bot(token=TELEGRAM_BOT_TOKEN)
     try:
         await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())

@@ -21,6 +21,7 @@ def seed_products(db: Session) -> None:
             ),
             price=None,
             currency="UZS",
+            image_url="/xl-01-photo.png",
             availability="Под заказ",
             warranty_months=12,
             specifications={
