@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { API_URL, apiFetch } from "../lib/api";
 
 type Product = {
   id: number;
@@ -18,7 +19,6 @@ type Product = {
   advantages: string[];
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export default function Catalog() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -29,8 +29,8 @@ export default function Catalog() {
 
   useEffect(() => {
     Promise.all([
-      fetch(`${API_URL}/api/v1/products`).then((r) => r.json()),
-      fetch(`${API_URL}/api/v1/products/categories/list`).then((r) => r.json()),
+      apiFetch(`${API_URL}/api/v1/products`).then((r) => r.json()),
+      apiFetch(`${API_URL}/api/v1/products/categories/list`).then((r) => r.json()),
     ])
       .then(([productsData, categoriesData]) => {
         setProducts(productsData.items ?? []);

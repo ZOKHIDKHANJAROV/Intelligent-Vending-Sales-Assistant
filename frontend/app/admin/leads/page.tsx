@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_URL, apiFetch } from "../../lib/api";
 
 type Lead = {
   id: number;
@@ -12,7 +13,6 @@ type Lead = {
   status: "new" | "contacted" | "closed";
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export default function LeadsPage() {
   const [key, setKey] = useState("");
@@ -21,7 +21,7 @@ export default function LeadsPage() {
   const [error, setError] = useState("");
 
   async function load(adminKey: string) {
-    const response = await fetch(`${API_URL}/api/v1/leads/admin`, {
+    const response = await apiFetch(`${API_URL}/api/v1/leads/admin`, {
       headers: { "X-Admin-Key": adminKey },
     });
     if (!response.ok) {
@@ -38,7 +38,7 @@ export default function LeadsPage() {
   }, []);
 
   async function changeStatus(id: number, status: string) {
-    await fetch(`${API_URL}/api/v1/leads/${id}/status?status=${status}`, {
+    await apiFetch(`${API_URL}/api/v1/leads/${id}/status?status=${status}`, {
       method: "PATCH",
       headers: { "X-Admin-Key": key },
     });

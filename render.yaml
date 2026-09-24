@@ -1,0 +1,16 @@
+# Render Blueprint: сайт (Next.js) на Render, бэкенд + Ollama на вашем ПК через ngrok.
+# Подробности — в DEPLOY.md
+services:
+  - type: web
+    name: vendai-frontend
+    runtime: node
+    plan: free
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Публичный адрес бэкенда, например https://xxx.ngrok-free.app — вшивается в сайт при сборке
+      - key: NEXT_PUBLIC_API_URL
+        sync: false

@@ -1,10 +1,10 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { API_URL, apiFetch } from "../lib/api";
 
 type Message = { role: "user" | "assistant"; content: string };
 type LeadFormState = { name: string; phone: string; message: string };
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 const initial: Message = {
   role: "assistant",
@@ -23,6 +23,7 @@ export default function AIChat() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([initial]);
   const [loading, setLoading] = useState(false);
+  const [streaming, setStreaming] = useState(false);
   const [wizardStep, setWizardStep] = useState<number | null>(null);
   const [wizard, setWizard] = useState({ purpose: "", location: "", volume: "", water_source: "" });
   const [salesContext, setSalesContext] = useState<Record<string, string>>({});
@@ -44,9 +45,11 @@ export default function AIChat() {
     setMessages(next);
     setMessage("");
     setLoading(true);
+    setStreaming(false);
 
+    let answer = "";
     try {
-      const response = await fetch(`${API_URL}/api/v1/chat`, {
+      const response = await apiFetch(`${API_URL}/api/v1/chat/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -56,20 +59,28 @@ export default function AIChat() {
         }),
       });
 
-      if (!response.ok) throw new Error("Chat request failed");
-      const data = await response.json();
+      if (!response.ok || !response.body) throw new Error("Chat request failed");
 
-      setMessages([...next, { role: "assistant", content: data.answer }]);
+      // Печатаем ответ по мере генерации моделью
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        answer += decoder.decode(value, { stream: true });
+        if (!answer) continue;
+        setStreaming(true);
+        setMessages([...next, { role: "assistant", content: answer }]);
+      }
+      answer += decoder.decode();
+      if (!answer.trim()) throw new Error("Empty answer");
+      setMessages([...next, { role: "assistant", content: answer }]);
     } catch {
-      setMessages([
-        ...next,
-        {
-          role: "assistant",
-          content: "Не удалось связаться с AI-консультантом. Оставьте заявку, и менеджер свяжется с вами.",
-        },
-      ]);
+      const fallback = "Не удалось связаться с AI-консультантом. Оставьте заявку, и менеджер свяжется с вами.";
+      setMessages([...next, { role: "assistant", content: answer ? `${answer}\n\n${fallback}` : fallback }]);
     } finally {
       setLoading(false);
+      setStreaming(false);
     }
   }
 
@@ -82,7 +93,7 @@ export default function AIChat() {
     event.preventDefault();
     setLeadState("sending");
     try {
-      const response = await fetch(API_URL + "/api/v1/leads", {
+      const response = await apiFetch(API_URL + "/api/v1/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...lead, product_slug: leadProductSlug, source: "website" }),
@@ -139,7 +150,7 @@ export default function AIChat() {
     setMessages((prev) => [...prev, { role: "user", content: value }, { role: "assistant", content: "Подбираю оборудование..." }]);
 
     try {
-      const response = await fetch(`${API_URL}/api/v1/recommendations`, {
+      const response = await apiFetch(`${API_URL}/api/v1/recommendations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nextWizard),
@@ -210,7 +221,10 @@ export default function AIChat() {
 
           <div className="ai-chat-messages">
             {messages.map((item, index) => (
-              <div className={`ai-message ai-${item.role}`} key={index}>
+              <div
+                className={`ai-message ai-${item.role} ${streaming && index === messages.length - 1 ? "ai-streaming" : ""}`}
+                key={index}
+              >
                 {item.content}
               </div>
             ))}
@@ -239,7 +253,7 @@ export default function AIChat() {
                 <button type="button" onClick={() => setLeadOpen(true)}>Получить предложение по этой модели</button>
               </div>
             )}
-            {loading && <div className="ai-message ai-assistant">Подбираю ответ...</div>}
+            {loading && !streaming && <div className="ai-message ai-assistant">Подбираю ответ...</div>}
             <div ref={bottomRef} />
           </div>
 

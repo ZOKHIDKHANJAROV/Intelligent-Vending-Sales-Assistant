@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { API_URL, apiFetch } from "../../lib/api";
 
 type Product = {
   name: string;
@@ -17,7 +18,6 @@ type Product = {
   advantages: string[];
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export default function ProductPage() {
   const params = useParams<{ slug: string }>();
@@ -25,7 +25,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/v1/products/${params.slug}`)
+    apiFetch(`${API_URL}/api/v1/products/${params.slug}`)
       .then((response) => {
         if (!response.ok) throw new Error("Product not found");
         return response.json();

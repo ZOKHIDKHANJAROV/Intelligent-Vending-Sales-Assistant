@@ -1,8 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { API_URL, apiFetch } from "../lib/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export default function LeadForm({ productSlug }: { productSlug?: string }) {
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
@@ -13,7 +13,7 @@ export default function LeadForm({ productSlug }: { productSlug?: string }) {
     setState("sending");
 
     try {
-      const response = await fetch(`${API_URL}/api/v1/leads`, {
+      const response = await apiFetch(`${API_URL}/api/v1/leads`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, product_slug: productSlug, source: "website" }),

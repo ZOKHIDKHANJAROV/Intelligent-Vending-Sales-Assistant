@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { API_URL, apiFetch } from "../lib/api";
 
 type Product = {
   id: number;
@@ -19,7 +20,6 @@ type Product = {
   is_active: boolean;
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 const emptyForm = {
   slug: "", name: "", model: "", category: "Вода", description: "",
@@ -52,7 +52,7 @@ export default function AdminPage() {
   }, []);
 
   async function loadProducts(adminKey = key) {
-    const response = await fetch(`${API_URL}/api/v1/admin/products`, {
+    const response = await apiFetch(`${API_URL}/api/v1/admin/products`, {
       headers: { "X-Admin-Key": adminKey },
     });
     if (!response.ok) {
@@ -98,7 +98,7 @@ export default function AdminPage() {
     const url = editingId
       ? `${API_URL}/api/v1/admin/products/${editingId}`
       : `${API_URL}/api/v1/admin/products`;
-    const response = await fetch(url, {
+    const response = await apiFetch(url, {
       method: editingId ? "PUT" : "POST",
       headers: { "Content-Type": "application/json", "X-Admin-Key": key },
       body: JSON.stringify(payload),
@@ -116,7 +116,7 @@ export default function AdminPage() {
 
   async function remove(product: Product) {
     if (!window.confirm(`Удалить «${product.name}»?`)) return;
-    const response = await fetch(`${API_URL}/api/v1/admin/products/${product.id}`, {
+    const response = await apiFetch(`${API_URL}/api/v1/admin/products/${product.id}`, {
       method: "DELETE", headers: { "X-Admin-Key": key },
     });
     if (response.ok) { setMessage("Товар удалён."); await loadProducts(); }

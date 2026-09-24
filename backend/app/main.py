@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,7 +24,9 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="VendAI API", version="0.5.0", description="Backend API for the VendAI vending sales platform.", lifespan=lifespan)
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+# Через запятую, например: https://vendai.onrender.com,http://localhost:3000
+CORS_ORIGINS = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "*").split(",") if origin.strip()]
+app.add_middleware(CORSMiddleware, allow_origins=CORS_ORIGINS, allow_methods=["*"], allow_headers=["*"])
 app.include_router(products_router)
 app.include_router(admin_products_router)
 app.include_router(chat_router)
