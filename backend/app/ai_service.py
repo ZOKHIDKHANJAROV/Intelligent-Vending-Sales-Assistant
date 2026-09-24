@@ -8,6 +8,9 @@ from .qdrant_service import search_documents
 
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434").rstrip("/")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:8b")
+# На CPU без GPU ответ 7B-модели занимает 1–2 минуты
+OLLAMA_TIMEOUT = float(os.getenv("OLLAMA_TIMEOUT", "240"))
+OLLAMA_NUM_PREDICT = int(os.getenv("OLLAMA_NUM_PREDICT", "450"))
 
 SYSTEM_PROMPT = """Ты — AI-консультант отдела продаж VendAI.
 Твоя задача — понять потребность клиента, подобрать подходящее оборудование и довести диалог до заявки менеджеру.
@@ -113,14 +116,15 @@ async def generate_answer(
     messages.append({"role": "user", "content": message})
 
     try:
-        async with httpx.AsyncClient(timeout=90) as client:
+        async with httpx.AsyncClient(timeout=OLLAMA_TIMEOUT) as client:
             response = await client.post(
                 f"{OLLAMA_BASE_URL}/api/chat",
                 json={
                     "model": OLLAMA_MODEL,
                     "messages": messages,
                     "stream": False,
-                    "options": {"temperature": 0.2},
+                    "options": {"temperature": 0.2, "num_predict": OLLAMA_NUM_PREDICT},
+                    "keep_alive": "30m",
                 },
             )
             response.raise_for_status()
@@ -129,7 +133,7 @@ async def generate_answer(
         return {
             "answer": "AI-консультант временно недоступен. Оставьте заявку, и менеджер свяжется с вами.",
             "model": OLLAMA_MODEL,
-            "error": str(exc),
+            "error": str(exc) or type(exc).__name__,
         }
 
     return {
