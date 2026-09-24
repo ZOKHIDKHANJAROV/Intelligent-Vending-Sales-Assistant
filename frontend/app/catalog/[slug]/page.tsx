@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { API_URL, apiFetch } from "../../lib/api";
+import { CONTACT } from "../../lib/contacts";
 
 type Product = {
   name: string;
@@ -54,6 +55,7 @@ export default function ProductPage() {
             <a href="/#about">О компании</a>
             <a href="/#contacts">Контакты</a>
           </nav>
+          <a className="header-tel" href={`tel:${CONTACT.tel}`}>{CONTACT.phone}</a>
           <a className="header-phone" href="/#contacts">Получить предложение</a>
         </div>
       </header>
