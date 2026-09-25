@@ -25,6 +25,15 @@ button, input, textarea { font: inherit; }
 nav { display: flex; gap: 26px; color: var(--muted); font-size: 14px; }
 nav a:hover, .text-link:hover { color: var(--text); }
 .header-phone { border: 1px solid var(--line); border-radius: 10px; padding: 11px 15px; font-size: 13px; }
+.header-tel { color: var(--text); font-size: 14px; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.header-tel:hover { color: var(--accent); }
+.contact-card { display: grid; gap: 6px; margin-top: 28px; padding: 20px 22px; max-width: 420px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.03); }
+.contact-label { color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.contact-name { font-size: 18px; }
+.contact-phone { font-size: 26px; font-weight: 800; letter-spacing: -.01em; color: var(--text); font-variant-numeric: tabular-nums; }
+.contact-phone:hover { color: var(--accent); }
+.contact-card small { color: var(--muted); font-size: 13px; }
+.footer-inner a:hover { color: var(--accent); }
 
 .hero { min-height: 700px; display: flex; align-items: center; overflow: hidden; border-bottom: 1px solid var(--line); }
 .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 50px; padding: 90px 0; }

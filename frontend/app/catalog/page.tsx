@@ -1,4 +1,5 @@
 import Catalog from "./Catalog";
+import { CONTACT } from "../lib/contacts";
 
 export default function CatalogPage() {
   return (
@@ -16,6 +17,7 @@ export default function CatalogPage() {
             <a href="/#about">О компании</a>
             <a href="/#contacts">Контакты</a>
           </nav>
+          <a className="header-tel" href={`tel:${CONTACT.tel}`}>{CONTACT.phone}</a>
           <a className="header-phone" href="/#contacts">Получить предложение</a>
         </div>
       </header>

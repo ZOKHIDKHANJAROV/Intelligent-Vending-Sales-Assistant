@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import VendingMachine3D from "../components/VendingMachine3D";
 import LeadForm from "../components/LeadForm";
 import AIChat from "../components/AIChat";
+import ContactCard from "../components/ContactCard";
+import { CONTACT } from "../lib/contacts";
 
 export default function Vending3DPage() {
   // Profitability calculator state
@@ -162,6 +164,7 @@ export default function Vending3DPage() {
             <a href="#calculator">Окупаемость</a>
             <a href="#contacts">Контакты</a>
           </nav>
+          <a className="header-tel" href={`tel:${CONTACT.tel}`}>{CONTACT.phone}</a>
           <a className="header-phone" href="#contacts">Получить предложение</a>
         </div>
       </header>
@@ -425,6 +428,7 @@ export default function Vending3DPage() {
               <div>✓ Полный комплект фильтров и мембрана Vontron в комплекте</div>
               <div>✓ Помощь в подборе прибыльной локации</div>
             </div>
+            <ContactCard />
           </div>
           <LeadForm />
         </div>
@@ -438,6 +442,7 @@ export default function Vending3DPage() {
         <div className="container footer-inner">
           <strong>VendAI • ATLANT FORTUNA XL-01</strong>
           <span>Интеллектуальные вендинговые станции чистой питьевой воды</span>
+          <a href={`tel:${CONTACT.tel}`}>{CONTACT.name} · {CONTACT.phone}</a>
           <span>© 2026</span>
         </div>
       </footer>

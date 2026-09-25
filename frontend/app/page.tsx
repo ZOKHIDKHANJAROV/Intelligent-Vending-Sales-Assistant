@@ -1,6 +1,8 @@
 import Catalog from "./catalog/Catalog";
 import LeadForm from "./components/LeadForm";
 import AIChat from "./components/AIChat";
+import ContactCard from "./components/ContactCard";
+import { CONTACT } from "./lib/contacts";
 
 export default function HomePage() {
   return (
@@ -18,6 +20,7 @@ export default function HomePage() {
             <a href="#about">О компании</a>
             <a href="#contacts">Контакты</a>
           </nav>
+          <a className="header-tel" href={`tel:${CONTACT.tel}`}>{CONTACT.phone}</a>
           <a className="header-phone" href="#contacts">Получить предложение</a>
         </div>
       </header>
@@ -119,6 +122,7 @@ export default function HomePage() {
             <span className="eyebrow">ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ</span>
             <h2>Расскажите, какой бизнес вы планируете запустить</h2>
             <p>Подберём оборудование и подготовим коммерческое предложение.</p>
+            <ContactCard />
           </div>
           <LeadForm />
         </div>
@@ -130,6 +134,7 @@ export default function HomePage() {
         <div className="container footer-inner">
           <strong>VendAI</strong>
           <span>Вендинговое оборудование для бизнеса</span>
+          <a href={`tel:${CONTACT.tel}`}>{CONTACT.name} · {CONTACT.phone}</a>
           <span>© 2026</span>
         </div>
       </footer>
